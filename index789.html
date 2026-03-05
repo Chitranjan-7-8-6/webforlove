@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Love Proposal</title>
+
+    <style>
+        body {
+            background-image: url("https://picsum.photos/1600/900");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+            font-family: Arial;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Heading */
+
+        h1 {
+            color: white;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+
+        .button-container {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Button Style */
+
+        button {
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            padding: 12px 35px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* YES Button */
+
+        #yesBtn {
+            background: #ff8533;
+            color: white;
+            box-shadow: 0 0 10px #ff8533, 0 0 20px #ff8533;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px #ff8533;
+            }
+
+            to {
+                box-shadow: 0 0 25px #ff0000;
+            }
+        }
+
+        /* NO Button */
+
+        #noBtn {
+            background: #333;
+            color: white;
+            position: absolute;
+        }
+
+        /* Message */
+
+        #teaseMessage {
+            margin-top: 20px;
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            color: white;
+            font-weight: bold;
+            display: none;
+            background: rgba(255, 51, 102, 0.8);
+            padding: 6px 15px;
+            border-radius: 10px;
+        }
+
+        /* Success Screen */
+
+        #successScreen {
+            display: none;
+            color: white;
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: bold;
+        }
+
+        /* Hearts */
+
+        .heart {
+            position: fixed;
+            font-size: 24px;
+            animation: float 3s linear forwards;
+        }
+
+        @keyframes float {
+
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-500px) scale(2);
+                opacity: 0;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="mainScreen">
+
+        <h1>Are you falling in my Love ??</h1>
+
+        <div class="button-container">
+
+            <button id="yesBtn" onclick="sayYes()">Yes 😎</button>
+
+            <button id="noBtn" onmouseover="moveNoButton()" ontouchstart="moveNoButton()" onclick="moveNoButton()">
+                No 😠
+            </button>
+
+        </div>
+
+        <div id="teaseMessage"></div>
+
+    </div>
+
+    <div id="successScreen">
+        CONGRATULATION YOU ARE TAKE RIGHT DECISION 😍❤️😍
+    </div>
+
+    <!-- YES SOUND -->
+    <audio id="yesSound" preload="auto">
+        <source src="https://www.myinstants.com/media/sounds/tada-fanfare.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+
+        const noBtn = document.getElementById("noBtn");
+        const teaseMessage = document.getElementById("teaseMessage");
+
+        const funnyMessages = [
+            "Really are you not interested me ?? 😒😏",
+            "Tere ko kya lgta h no kr degi ? 🤡",
+            "Achha Khelti ho, Nice try 🫡🫡",
+            "Please think first and then click it.",
+            "Click YES, and fall in my love 😈🤓😈"
+        ];
+
+        let messageIndex = 0;
+
+        /* NO button sound */
+
+        function playSound() {
+
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 700;
+            oscillator.type = "square";
+
+            oscillator.start();
+
+            gainNode.gain.exponentialRampToValueAtTime(
+                0.00001,
+                audioContext.currentTime + 0.3
+            );
+
+        }
+
+        /* Move NO Button */
+
+        function moveNoButton() {
+
+            playSound();
+
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+
+            noBtn.style.position = "fixed";
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+
+            teaseMessage.style.display = "inline-block";
+            teaseMessage.innerText = funnyMessages[messageIndex];
+
+            messageIndex = (messageIndex + 1) % funnyMessages.length;
+
+        }
+
+        /* YES click */
+
+        function sayYes() {
+
+            let sound = document.getElementById("yesSound");
+            sound.currentTime = 0;
+            sound.play();
+
+            document.getElementById("mainScreen").style.display = "none";
+            document.getElementById("successScreen").style.display = "block";
+
+            createHearts();
+
+        }
+
+        /* Heart animation */
+
+        function createHearts() {
+
+            for (let i = 0; i < 50; i++) {
+
+                let heart = document.createElement("div");
+
+                heart.className = "heart";
+                heart.innerHTML = "❤️";
+
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.bottom = "0px";
+                heart.style.fontSize = (Math.random() * 30 + 20) + "px";
+
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 3000);
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
