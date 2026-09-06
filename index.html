@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You Be Mine?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --wine: #4a1226;
+        --wine-deep: #2c0a17;
+        --rose: #e0577b;
+        --rose-bright: #ff6f91;
+        --blush: #ffd9e3;
+        --gold: #e3b873;
+        --cream: #fdf3ee;
+        --shadow-rose: rgba(224, 87, 123, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        height: 100vh;
+        height: 100dvh; /* real visible height on mobile, ignores address-bar shrink/grow */
+        overflow: hidden;
+        font-family: 'Quicksand', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: var(--cream);
+        background:
+            radial-gradient(ellipse at top, rgba(255, 111, 145, 0.25), transparent 55%),
+            radial-gradient(ellipse at bottom, rgba(44, 10, 23, 0.9), transparent 60%),
+            linear-gradient(160deg, var(--wine-deep) 0%, var(--wine) 55%, #6e1f3a 100%);
+        position: relative;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: url("https://picsum.photos/1600/900") center/cover no-repeat;
+        opacity: 0.22;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Ambient floating hearts, always drifting softly in the background */
+    .ambient-heart {
+        position: fixed;
+        bottom: -40px;
+        opacity: 0.35;
+        color: var(--rose);
+        pointer-events: none;
+        animation: drift linear infinite;
+        z-index: 0;
+        filter: drop-shadow(0 0 6px rgba(255, 111, 145, 0.4));
+    }
+
+    @keyframes drift {
+        0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+        10%  { opacity: 0.35; }
+        90%  { opacity: 0.2; }
+        100% { transform: translateY(-110vh) translateX(var(--drift-x, 20px)) rotate(20deg); opacity: 0; }
+    }
+
+    .card {
+        position: relative;
+        z-index: 2;
+        padding: 56px 48px 40px;
+        border-radius: 28px;
+        max-width: 560px;
+        width: 88vw;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 217, 227, 0.25);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .eyebrow {
+        font-size: 0.95rem;
+        letter-spacing: 0.04em;
+        color: var(--gold);
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-weight: 600;
+        font-size: clamp(1.9rem, 5.5vw, 3rem);
+        line-height: 1.25;
+        margin: 0 0 38px;
+        color: var(--cream);
+        text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 28px rgba(255, 111, 145, 0.32);
+        animation: titleFloat 2.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes titleFloat {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-2px); }
+    }
+
+    .button-container {
+        position: relative;
+        width: 100%;
+        min-height: 130px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 26px;
+        flex-wrap: wrap;
+    }
+
+    button {
+        font-family: 'Quicksand', sans-serif;
+        font-size: clamp(1rem, 3.6vw, 1.2rem);
+        padding: 15px 42px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        -webkit-tap-highlight-color: transparent; /* removes grey flash on mobile tap */
+    }
+
+    #yesBtn {
+        background: linear-gradient(135deg, var(--rose-bright), var(--rose) 60%, #c23a5c);
+        color: #fff8f5;
+        box-shadow: 0 0 22px var(--shadow-rose), 0 8px 20px rgba(0, 0, 0, 0.25);
+        animation: pulse 1.8s ease-in-out infinite;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+        z-index: 5;
+    }
+
+    #yesBtn:hover {
+        transform: translateY(-2px) scale(1.03);
+        filter: brightness(1.06);
+    }
+
+    #yesBtn:hover { transform: scale(1.06); }
+    #yesBtn:active { transform: scale(0.97); }
+
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 18px var(--shadow-rose), 0 8px 20px rgba(0,0,0,0.25); }
+        50%      { box-shadow: 0 0 34px var(--rose-bright), 0 8px 26px rgba(0,0,0,0.3); }
+    }
+
+    #noBtn {
+        background: rgba(253, 243, 238, 0.12);
+        color: var(--cream);
+        border: 1.5px solid rgba(253, 243, 238, 0.4);
+        position: fixed;
+        z-index: 20;
+        transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    transform 0.2s ease;
+    }
+
+    #noBtn:hover { transform: scale(0.97); }
+
+    #teaseMessage {
+        margin-top: 26px;
+        font-size: clamp(0.9rem, 3vw, 1.05rem);
+        font-weight: 600;
+        color: var(--blush);
+        background: rgba(74, 18, 38, 0.55);
+        border: 1px solid rgba(255, 217, 227, 0.25);
+        padding: 10px 22px;
+        border-radius: 999px;
+        display: none;
+        max-width: 90%;
+        box-shadow: 0 0 20px rgba(255, 111, 145, 0.25);
+        animation: teaseIn 0.25s ease;
+    }
+
+    @keyframes teaseIn {
+        0% { opacity: 0; transform: scale(0.92); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    #successScreen {
+        display: none;
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 20px;
+    }
+
+    #successScreen .eyebrow { color: var(--gold); }
+
+    #successScreen h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: clamp(1.7rem, 6vw, 2.8rem);
+        color: var(--cream);
+        margin: 6px 0 0;
+        text-shadow: 0 0 30px rgba(255, 111, 145, 0.6);
+    }
+
+    .heart-burst {
+        position: fixed;
+        z-index: 999;
+        animation: floatUp 3s ease-in forwards;
+        pointer-events: none;
+    }
+
+    @keyframes floatUp {
+        0%   { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 1; }
+        70%  { opacity: 1; }
+        100% { transform: translateY(-100vh) scale(1.6) rotate(25deg); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        #yesBtn, .ambient-heart, .heart-burst { animation: none !important; }
+    }
+
+    @media (max-width: 560px) {
+        .card {
+            width: 92vw;
+            padding: 36px 20px 28px;
+        }
+
+        h1 {
+            margin-bottom: 26px;
+        }
+
+        .button-container {
+            gap: 14px;
+            min-height: 108px;
+        }
+
+        button {
+            padding: 13px 28px;
+        }
+
+        #teaseMessage {
+            margin-top: 18px;
+            max-width: 100%;
+        }
+    }
+
+    /* Small phones: tighter padding so the card never feels cramped,
+       and a smaller No button so it always has room to escape to. */
+    @media (max-width: 380px) {
+        .card { padding: 40px 24px 32px; width: 92vw; }
+        button { padding: 12px 24px; }
+        .button-container { gap: 12px; min-height: 96px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="mainScreen">
+    <div class="card">
+        <div class="eyebrow">A question, for you</div>
+        <h1>Are you falling in my love?</h1>
+        <div class="button-container">
+            <button id="yesBtn" onclick="sayYes()">Yes 😍</button>
+            <button id="noBtn"
+                tabindex="-1"
+                onmouseover="moveNoButton(event.clientX, event.clientY)"
+                ontouchstart="moveNoButton(event.touches[0].clientX, event.touches[0].clientY)"
+                onclick="moveNoButton(event.clientX, event.clientY)">No 😠</button>
+        </div>
+        <div id="teaseMessage"></div>
+    </div>
+</div>
+
+<div id="successScreen">
+    <div class="eyebrow">She said yes</div>
+    <h2>You made the right decision 😍❤️</h2>
+</div>
+
+<script>
+    const noBtn = document.getElementById("noBtn");
+    const teaseMessage = document.getElementById("teaseMessage");
+    const funnyMessages = [
+        "Really? Not interested? 😒",
+        "Nice try, click Yes! 🤡",
+        "Think again... 🫡",
+        "No is not an option! 😈",
+        "Your finger will never catch me 😏"
+    ];
+    let messageIndex = 0;
+
+    // One shared AudioContext, created lazily on first user interaction
+    // (browsers block audio until a real click/touch happens, and most
+    // browsers also cap how many contexts a page can create).
+    let audioContext = null;
+    function getAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === "suspended") {
+            audioContext.resume();
+        }
+        return audioContext;
+    }
+
+    function playSound() {
+        try {
+            const ctx = getAudioContext();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            oscillator.frequency.value = 600;
+            oscillator.type = "sine";
+            gainNode.gain.setValueAtTime(0.2, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.2);
+            oscillator.start();
+            oscillator.stop(ctx.currentTime + 0.2);
+        } catch (e) { /* audio blocked, ignore */ }
+    }
+
+    // Synthesized celebration fanfare — no external file, so nothing to
+    // host and nothing that can be blocked by CORS or a dead link.
+    function playFanfare() {
+        try {
+            const ctx = getAudioContext();
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 - E5 - G5 - C6
+            notes.forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "triangle";
+                osc.frequency.value = freq;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const startTime = ctx.currentTime + i * 0.12;
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(0.28, startTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.6);
+
+                osc.start(startTime);
+                osc.stop(startTime + 0.6);
+            });
+        } catch (e) { /* audio blocked, ignore */ }
+    }
+
+    // Keeps the button escaping toward open space rather than a pure
+    // random spot, so it can never be re-placed right back under the cursor.
+    function getEscapePosition(avoidX, avoidY) {
+        const padding = window.innerWidth <= 560 ? 12 : 18;
+        const btnWidth = noBtn.offsetWidth || 120;
+        const btnHeight = noBtn.offsetHeight || 48;
+        const maxX = Math.max(window.innerWidth - btnWidth - padding, 0);
+        const maxY = Math.max(window.innerHeight - btnHeight - padding, 0);
+
+        const candidates = [
+            { x: padding, y: padding },
+            { x: maxX, y: padding },
+            { x: padding, y: maxY },
+            { x: maxX, y: maxY },
+            { x: Math.max((window.innerWidth - btnWidth) / 2, padding), y: padding },
+            { x: Math.max((window.innerWidth - btnWidth) / 2, padding), y: maxY }
+        ];
+
+        for (let i = 0; i < 8; i++) {
+            candidates.push({
+                x: Math.random() * Math.max(maxX - padding, 0),
+                y: Math.random() * Math.max(maxY - padding, 0)
+            });
+        }
+
+        let best = candidates[0];
+        let bestDist = -1;
+        for (const c of candidates) {
+            const dist = Math.hypot(c.x - avoidX, c.y - avoidY);
+            if (dist > bestDist) {
+                bestDist = dist;
+                best = c;
+            }
+        }
+
+        return {
+            x: Math.min(Math.max(best.x, 0), Math.max(window.innerWidth - btnWidth, 0)),
+            y: Math.min(Math.max(best.y, 0), Math.max(window.innerHeight - btnHeight, 0))
+        };
+    }
+
+    function moveNoButton(avoidX, avoidY) {
+        playSound();
+        const cx = typeof avoidX === "number" ? avoidX : window.innerWidth / 2;
+        const cy = typeof avoidY === "number" ? avoidY : window.innerHeight / 2;
+        const { x, y } = getEscapePosition(cx, cy);
+
+        noBtn.style.position = "fixed";
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+
+        teaseMessage.style.display = "inline-block";
+        teaseMessage.innerText = funnyMessages[messageIndex];
+        messageIndex = (messageIndex + 1) % funnyMessages.length;
+    }
+
+    // Desktop safety net: flee as soon as the cursor gets close, well
+    // before it could ever land a click — hover/click alone can't
+    // guarantee that on a fast or lucky click.
+    const FLEE_RADIUS = 110;
+    let lastFleeTime = 0;
+    document.addEventListener("mousemove", (e) => {
+        const rect = noBtn.getBoundingClientRect();
+        const btnCenterX = rect.left + rect.width / 2;
+        const btnCenterY = rect.top + rect.height / 2;
+        const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
+
+        if (dist < FLEE_RADIUS && performance.now() - lastFleeTime > 200) {
+            lastFleeTime = performance.now();
+            moveNoButton(e.clientX, e.clientY);
+        }
+    });
+
+    function sayYes() {
+        playFanfare();
+        document.getElementById("mainScreen").style.display = "none";
+        document.getElementById("successScreen").style.display = "block";
+        createHearts();
+    }
+
+    function createHearts() {
+        for (let i = 0; i < 60; i++) {
+            const heart = document.createElement("div");
+            heart.className = "heart-burst";
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "100vh";
+            heart.style.fontSize = (Math.random() * 28 + 18) + "px";
+            heart.style.animationDelay = (Math.random() * 0.6) + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3800);
+        }
+    }
+
+    // Gentle ambient hearts drifting in the background at all times
+    function spawnAmbientHeart() {
+        const heart = document.createElement("div");
+        heart.className = "ambient-heart";
+        heart.innerHTML = "❤";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = (Math.random() * 16 + 12) + "px";
+        heart.style.setProperty("--drift-x", (Math.random() * 80 - 40) + "px");
+        heart.style.animationDuration = (Math.random() * 6 + 8) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 15000);
+    }
+    setInterval(spawnAmbientHeart, 900);
+</script>
+
+</body>
+</html>
